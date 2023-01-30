@@ -58,36 +58,27 @@ setInterval(loadMore, 500);
 
 // Setup a trade data stream
 wsx.init(["APE-PERP"]);
-wsx.ontrades = (d) => {
+wsx.ontrades = (data) => {
   if (!chart.hub.mainOv) return;
   const ohlcv = chart.hub.mainOv.data;
-  const trade = {
-    time: d.t,
-    open: parseFloat(d.o),
-    high: parseFloat(d.h),
-    low: parseFloat(d.l),
-    close: parseFloat(d.c),
-    volume: parseFloat(d.q)
-  };
-
   let last = ohlcv[ohlcv.length - 1];
-  if (last[0] == trade.time) {
+  if (last[0] <= data.time) {
     // Update an existing one
-    last[2] = Math.max(trade.high, last[2]);
-    last[3] = Math.min(trade.low, last[3]);
-    last[4] = trade.close;
-    last[5] = trade.volume;
+    last[2] = Math.max(data.high, last[2]);
+    last[3] = Math.min(data.low, last[3]);
+    last[4] = data.close;
+    last[5] = data.volume;
     chart.update(); // Candle update
   } else {
     // And new zero-height candle
     const nc = [
-      trade.time,
-      trade.open,
-      trade.high,
-      trade.low,
-      trade.close,
-      trade.volume,
-      new Date(trade.time).toISOString(),
+      data.time,
+      data.open,
+      data.high,
+      data.low,
+      data.close,
+      data.volume,
+      new Date(data.time).toISOString(),
     ];
     console.log(nc);
     //callback('candle-close', symbol)

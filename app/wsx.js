@@ -1,9 +1,9 @@
 var last_event = Infinity;
 var ws = null;
-var _ontrades = () => {};
-var _onquotes = () => {};
-var _onready = () => {};
-var _onrefine = () => {};
+var _ontrades = () => { };
+var _onquotes = () => { };
+var _onready = () => { };
+var _onrefine = () => { };
 var reconnecting = false;
 var ready = false;
 
@@ -24,7 +24,17 @@ function start_hf() {
     try {
       const data = JSON.parse(e.data);
       if (!data.k) return print(data);
-      _ontrades(data.k);
+
+      const trade = {
+        time: data.k.t,
+        open: parseFloat(data.k.o),
+        high: parseFloat(data.k.h),
+        low: parseFloat(data.k.l),
+        close: parseFloat(data.k.c),
+        volume: parseFloat(data.k.q)
+      };
+
+      _ontrades(trade);
       last_event = now();
     } catch (e) {
       // log
