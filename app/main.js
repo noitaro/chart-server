@@ -37,12 +37,12 @@ dl.load((data) => {
 // Load deeper into the history
 function loadMore() {
   if (!chart.hub.mainOv) return;
-  const data = chart.hub.mainOv.data;
-  const t0 = data[0][0];
+  const ohlcv = chart.hub.mainOv.data;
+  const t0 = ohlcv[0][0];
   if (chart.range[0] < t0) {
     dl.loadMore(t0 - 1, 500, (chunk) => {
       // Add a new chunk at the beginning
-      data.unshift(...chunk);
+      ohlcv.unshift(...chunk);
       // Yo need to update "range"
       // when the data range is changed
       chart.update("data");
