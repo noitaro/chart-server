@@ -1,8 +1,15 @@
 import os
 from flask import Flask, render_template, send_from_directory
+from flask_cors import CORS
+import requests
+import json
+import pybotters
+import pandas as pd
+import datetime
 
 app = Flask(__name__, static_folder=None, template_folder="./app/dist")
 app.config['JSON_AS_ASCII'] = False
+CORS(app)
 
 
 @app.route("/", methods=['GET'])
