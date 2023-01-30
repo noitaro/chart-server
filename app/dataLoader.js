@@ -1,3 +1,5 @@
+import wsx from "./wsx.js";
+
 class DataLoader {
   constructor() {
     this.URL = "https://api1.binance.com/api/v3/klines";
@@ -37,6 +39,39 @@ class DataLoader {
     const callbackData = data.map((x) => this.format(x));
     // callback(callbackData);
     this.loading = false;
+  }
+
+  wsxInit() {
+    wsx.init(["APE-PERP"]);
+    wsx.ontrades = (data) => {
+      if (!chart.hub.mainOv) return;
+      const ohlcv = chart.hub.mainOv.data;
+      let last = ohlcv[ohlcv.length - 1];
+      if (last[0] <= data.time) {
+        // Update an existing one
+        last[2] = Math.max(data.high, last[2]);
+        last[3] = Math.min(data.low, last[3]);
+        last[4] = data.close;
+        last[5] = data.volume;
+        chart.update(); // Candle update
+      } else {
+        // And new zero-height candle
+        const nc = [
+          data.time,
+          data.open,
+          data.high,
+          data.low,
+          data.close,
+          data.volume,
+          new Date(data.time).toISOString(),
+        ];
+        console.log(nc);
+        //callback('candle-close', symbol)
+        ohlcv.push(nc);
+        // Make update('range')
+        chart.update("data"); // New candle
+      }
+    };
   }
 
   format(x) {

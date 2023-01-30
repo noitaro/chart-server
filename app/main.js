@@ -1,8 +1,6 @@
 import "./style.css";
 import { NightVision } from "night-vision";
 import { DataLoader } from "./dataLoader.js";
-import wsx from "./wsx.js";
-import sampler from "./ohlcvSampler.js";
 
 document.querySelector("#app").innerHTML = `
 <style>
@@ -57,36 +55,7 @@ chart.events.on("app:$range-update", loadMore);
 setInterval(loadMore, 500);
 
 // Setup a trade data stream
-wsx.init(["APE-PERP"]);
-wsx.ontrades = (data) => {
-  if (!chart.hub.mainOv) return;
-  const ohlcv = chart.hub.mainOv.data;
-  let last = ohlcv[ohlcv.length - 1];
-  if (last[0] <= data.time) {
-    // Update an existing one
-    last[2] = Math.max(data.high, last[2]);
-    last[3] = Math.min(data.low, last[3]);
-    last[4] = data.close;
-    last[5] = data.volume;
-    chart.update(); // Candle update
-  } else {
-    // And new zero-height candle
-    const nc = [
-      data.time,
-      data.open,
-      data.high,
-      data.low,
-      data.close,
-      data.volume,
-      new Date(data.time).toISOString(),
-    ];
-    console.log(nc);
-    //callback('candle-close', symbol)
-    ohlcv.push(nc);
-    // Make update('range')
-    chart.update("data"); // New candle
-  }
-};
+dl.wsxInit();
 
 // Refernce for experiments
 window.chart = chart;
