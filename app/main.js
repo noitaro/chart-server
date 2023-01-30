@@ -1,6 +1,6 @@
 import "./style.css";
 import { NightVision } from "night-vision";
-import { DataLoader } from "./dataLoader.js";
+import { DataLoader } from "./binanceDataLoader.js";
 
 document.querySelector("#app").innerHTML = `
 <style>
